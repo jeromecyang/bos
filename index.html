@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script>
+      $(document).ready(function(){
+        var map = new google.maps.Map($("#map")[0], {
+          zoom: 14,
+          center: new google.maps.LatLng(42.345, -71.14),
+          disableDefaultUI: true,
+          mapTypeId: "custom"
+        });
+        map.mapTypes.set("custom", new google.maps.StyledMapType([
+          {
+            stylers: [
+              { hue: '#001111' }, { visibility: 'simplified' }, { gamma: 0.05 }
+            ]
+          },
+          {
+            elementType: 'labels',
+            stylers: [{ visibility: 'off' }]
+          },
+          {
+            featureType: 'road',
+            stylers: [{ color: '#222222' }]
+          },
+          {
+            featureType: 'transit.line',
+            stylers: [{ color: '#224422' }, { weight: 1.5 }]
+          },
+          {
+            featureType: 'transit.station',
+            stylers: [{ visibility: 'simplified' }, { color: '#448844' }]
+          }
+        ]));
+      
+        var markers = [];
+        var loadIndex = 0;
+        loadData();
+        
+        function loadData(){
+          $.when(
+            $.getJSON("http://api.openweathermap.org/data/2.5/weather?q=Boston,MA&units=imperial"),
+            $.getJSON("http://realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=813_&format=json")
+          ).done(function(weatherData, transitData){
+            var datetime = new Date();
+            $("#datetime").html(datetime.toDateString() + " " + datetime.toTimeString());
+            $("#temp").html(Math.round(weatherData[0].main.temp) + "&deg;F");
+            $("#details").html(weatherData[0].weather[0].main);
+            
+            var vehicles = transitData[0].direction.filter(function(d){ return d.direction_id === "1" })[0].trip;
+            $.each(markers, function(i, m){
+              m.setMap(null);
+            });
+            markers = $.map(vehicles, function(v){
+              return new google.maps.Marker({
+                position: new google.maps.LatLng(v.vehicle.vehicle_lat, v.vehicle.vehicle_lon),
+                map: map,
+                title: v.vehicle.vehicle_id,
+                icon: {
+                  path: 'M 0,-2 1.5,2 0,1 -1.5,2 z',
+                  fillColor: "#ccffcc",
+                  fillOpacity: 0.5,
+                  strokeWeight: 0,
+                  scale: 8,
+                  rotation: Number(v.vehicle.vehicle_bearing)
+                }
+              });
+            });
+            loadIndex++;
+            
+            if (loadIndex < 30) {
+              setTimeout(function(){
+                loadData();
+              }, 15000);
+            };
+          });
+        };
+      });
+    </script>
+  </head>
+  <body style="background-color: #000">
+    <div style="position: relative; width: 960px; margin: 0 auto">
+      <div id="map" style="width: 960px; height: 360px"></div>
+      <div id="weather" style="position: absolute; top: 0; left: 0; color: #fff;  padding: 10px;">
+        <div id="datetime" style="font: 16px Segoe UI"></div>
+        <div id="temp" style="font: 60px Segoe UI Light"></div>
+        <div id="details" style="font: 16px Segoe UI"></div>
+      </div>
+    </div>
+  </body>
+</html>
