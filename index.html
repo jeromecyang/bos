@@ -34,22 +34,37 @@
             stylers: [{ visibility: 'simplified' }, { color: '#448844' }]
           }
         ]));
-      
+        
         var markers = [];
         var loadIndex = 0;
-        loadData();
+        clock();
         
-        function loadData(){
-          $.when(
-            $.getJSON("http://api.openweathermap.org/data/2.5/weather?q=Boston,MA&units=imperial"),
-            $.getJSON("http://realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=813_&format=json")
-          ).done(function(weatherData, transitData){
-            var datetime = new Date();
-            $("#datetime").html(datetime.toDateString() + " " + datetime.toTimeString());
-            $("#temp").html(Math.round(weatherData[0].main.temp) + "&deg;F");
-            $("#details").html(weatherData[0].weather[0].main);
-            
-            var vehicles = transitData[0].direction.filter(function(d){ return d.direction_id === "1" })[0].trip;
+        $.when(
+          $.getJSON("//api.openweathermap.org/data/2.5/weather?q=Boston,MA&units=imperial"),
+          $.ajax({
+            url: "//www.biblegateway.com/votd/get/?format=json",
+            dataType: "JSONP"
+          })
+        ).done(function(weatherData, bibleVerse){
+          $("#temp").html(Math.round(weatherData[0].main.temp) + "&deg;F");
+          $("#details").html(weatherData[0].weather[0].main);
+          $("#verse").html(bibleVerse[0].votd.content + " <i>(" + bibleVerse[0].votd.reference + ", " + bibleVerse[0].votd.version_id + ")</i>");
+          
+          loadTransitData();
+        });
+        
+        function clock(){
+          var datetime = new Date();
+          $("#datetime").html(datetime.toDateString() + " " + datetime.toTimeString());
+          
+          setTimeout(function(){
+            clock();
+          }, 500);
+        };
+        
+        function loadTransitData(){
+          $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=813_&format=json").done(function(transitData){
+            var vehicles = transitData.direction.filter(function(d){ return d.direction_id === "1" })[0].trip;
             $.each(markers, function(i, m){
               m.setMap(null);
             });
@@ -70,9 +85,9 @@
             });
             loadIndex++;
             
-            if (loadIndex < 30) {
+            if (loadIndex < 200) {
               setTimeout(function(){
-                loadData();
+                loadTransitData();
               }, 15000);
             };
           });
@@ -88,6 +103,7 @@
         <div id="temp" style="font: 60px Segoe UI Light"></div>
         <div id="details" style="font: 16px Segoe UI"></div>
       </div>
+      <p id="verse" style="font: 16px Segoe UI; color: #fff"></p>
     </div>
   </body>
 </html>
