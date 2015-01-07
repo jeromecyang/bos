@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background-color: #000;
+      }
+      #info {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #fff;
+        padding: 10px;
+        font: 24px Segoe UI Light;
+        max-width: 250px;
+      }
+      #temperature {
+        font-size: 72px;
+        line-height: 72px;
+        vertical-align: text-top;
+      }
+      #weather {
+        line-height: 48px;
+        vertical-align: text-top;
+      }
+      #verse {
+        font-size: 16px;
+        padding: 5px 0;
+      }
+    </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
     <script>
@@ -46,16 +77,17 @@
             dataType: "JSONP"
           })
         ).done(function(weatherData, bibleVerse){
-          $("#temp").html(Math.round(weatherData[0].main.temp) + "&deg;F");
-          $("#details").html(weatherData[0].weather[0].main);
           $("#verse").html(bibleVerse[0].votd.content + " <i>(" + bibleVerse[0].votd.reference + ", " + bibleVerse[0].votd.version_id + ")</i>");
+          $("#temperature").html(Math.round(weatherData[0].main.temp) + "&deg;F");
+          $("#weather").html(weatherData[0].weather[0].main);
+          
           
           loadTransitData();
         });
         
         function clock(){
           var datetime = new Date();
-          $("#datetime").html(datetime.toDateString() + " " + datetime.toTimeString());
+          $("#datetime").html(datetime.toLocaleTimeString() + " | " + datetime.toLocaleDateString());
           
           setTimeout(function(){
             clock();
@@ -95,15 +127,16 @@
       });
     </script>
   </head>
-  <body style="background-color: #000">
-    <div style="position: relative; width: 960px; margin: 0 auto">
-      <div id="map" style="width: 960px; height: 360px"></div>
-      <div id="weather" style="position: absolute; top: 0; left: 0; color: #fff;  padding: 10px;">
-        <div id="datetime" style="font: 16px Segoe UI"></div>
-        <div id="temp" style="font: 60px Segoe UI Light"></div>
-        <div id="details" style="font: 16px Segoe UI"></div>
+  <body>
+    <div id="map"></div>
+    <div id="info">
+      
+      <div id="datetime"></div>
+      <div id="verse"></div>
+      <div>
+        <span id="temperature"></span>
+        <span id="weather"></span>
       </div>
-      <p id="verse" style="font: 16px Segoe UI; color: #fff"></p>
     </div>
   </body>
 </html>
