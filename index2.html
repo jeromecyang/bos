@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background-color: #000;
+      }
+    </style>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script>
+      $(document).ready(function(){
+        var map = new google.maps.Map($("#map")[0], {
+          zoom: 14,
+          center: new google.maps.LatLng(42.345, -71.14),
+          disableDefaultUI: true,
+          mapTypeId: "custom"
+        });
+        map.mapTypes.set("custom", new google.maps.StyledMapType([
+          {
+            stylers: [
+              { hue: '#001111' }, { visibility: 'simplified' }, { gamma: 0.05 }
+            ]
+          },
+          {
+            elementType: 'labels',
+            stylers: [{ visibility: 'off' }]
+          },
+          {
+            featureType: 'road',
+            stylers: [{ color: '#222222' }]
+          },
+          {
+            featureType: 'transit.line',
+            stylers: [{ color: '#224422' }, { weight: 1.5 }]
+          },
+          {
+            featureType: 'transit.station',
+            stylers: [{ visibility: 'simplified' }, { color: '#448844' }]
+          }
+        ]));
+        
+        var markers = [];
+        var loadIndex = 0;
+
+        loadTransitData();
+        
+        function loadTransitData(){
+          $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=" + (location.hash !== "" ? location.hash.replace(/#/g, "") : "813_") + "&format=json").done(function(transitData){
+            $.each(markers, function(i, m){
+              m.setMap(null);
+            });
+            markers = [];
+          
+            $.each(transitData.direction, function(i, direction){
+              markers = markers.concat($.map(direction.trip, function(v){
+                return new google.maps.Marker({
+                  position: new google.maps.LatLng(v.vehicle.vehicle_lat, v.vehicle.vehicle_lon),
+                  map: map,
+                  title: v.trip_headsign,
+                  icon: {
+                    path: 'M -1,-1 1,-1 1,1 -1,1 z',
+                    fillColor: i ? "#ffcccc" : "#ccffcc",
+                    fillOpacity: 0.5,
+                    strokeWeight: 0,
+                    scale: 6
+                  }
+                });
+              }));
+            });
+
+            loadIndex++;
+            
+            if (loadIndex < 200) {
+              setTimeout(function(){
+                loadTransitData();
+              }, 15000);
+            };
+          });
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
