@@ -34,14 +34,14 @@
             featureType: 'road',
             stylers: [{ color: '#222222' }]
           },
-          {
+          /*{
             featureType: 'transit.line',
             stylers: [{ color: '#224422' }, { weight: 1.5 }]
           },
           {
             featureType: 'transit.station',
             stylers: [{ visibility: 'simplified' }, { color: '#448844' }]
-          }
+          }*/
         ]));
         
         var markers = [];
@@ -50,7 +50,7 @@
         loadTransitData();
         
         function loadTransitData(){
-          $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=" + (location.hash !== "" ? location.hash.replace(/#/g, "") : "813_") + "&format=json").done(function(transitData){
+          $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=" + (location.search !== "" ? location.search.replace(/\?route=/g, "") : "813_") + "&format=json").done(function(transitData){
             $.each(markers, function(i, m){
               m.setMap(null);
             });
@@ -58,18 +58,22 @@
           
             $.each(transitData.direction, function(i, direction){
               markers = markers.concat($.map(direction.trip, function(v){
-                return new google.maps.Marker({
+                var marker = new google.maps.Marker({
                   position: new google.maps.LatLng(v.vehicle.vehicle_lat, v.vehicle.vehicle_lon),
                   map: map,
                   title: v.trip_headsign,
                   icon: {
                     path: 'M -1,-1 1,-1 1,1 -1,1 z',
-                    fillColor: i ? "#ffcccc" : "#ccffcc",
+                    fillColor: i ? "#cc9999" : "#99cc99",
                     fillOpacity: 0.5,
                     strokeWeight: 0,
                     scale: 6
                   }
                 });
+                google.maps.event.addListener(marker, 'click', function() {
+                  new google.maps.InfoWindow({ content: v.trip_id + " " + this.title }).open(map, marker);
+                 });
+                return marker;
               }));
             });
 
