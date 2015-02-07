@@ -44,37 +44,49 @@
           }*/
         ]));
         
-        var markers = [];
+        var markers = {};
         var loadIndex = 0;
 
         loadTransitData();
         
         function loadTransitData(){
           $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=" + (location.search !== "" ? location.search.replace(/\?route=/g, "") : "813_") + "&format=json").done(function(transitData){
-            $.each(markers, function(i, m){
-              m.setMap(null);
-            });
-            markers = [];
-          
+
+            var tripIds = [];
             $.each(transitData.direction, function(i, direction){
-              markers = markers.concat($.map(direction.trip, function(v){
-                var marker = new google.maps.Marker({
-                  position: new google.maps.LatLng(v.vehicle.vehicle_lat, v.vehicle.vehicle_lon),
-                  map: map,
-                  title: v.trip_headsign,
-                  icon: {
-                    path: 'M -1,-1 1,-1 1,1 -1,1 z',
-                    fillColor: i ? "#cc9999" : "#99cc99",
-                    fillOpacity: 0.5,
-                    strokeWeight: 0,
-                    scale: 6
-                  }
-                });
-                google.maps.event.addListener(marker, 'click', function() {
-                  new google.maps.InfoWindow({ content: v.trip_id + " " + this.title }).open(map, marker);
-                 });
-                return marker;
-              }));
+              tripIds = tripIds.concat($.map(direction.trip, function(v){ return v.trip_id }));
+            });
+
+            $.each(transitData.direction, function(i, direction){
+              $.each(markers, function(id, marker){
+                if (tripIds.indexOf(id) === -1){
+                  delete markers[id];
+                };
+              });
+
+              $.each(direction.trip, function(j, v){
+                if (!markers[v.trip_id]) {
+                  var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(v.vehicle.vehicle_lat, v.vehicle.vehicle_lon),
+                    map: map,
+                    title: v.trip_headsign,
+                    icon: {
+                      path: 'M -1,-1 1,-1 1,1 -1,1 z',
+                      fillColor: i ? "#cc9999" : "#99cc99",
+                      fillOpacity: 0.5,
+                      strokeWeight: 0,
+                      scale: 6
+                    }
+                  });
+                  google.maps.event.addListener(marker, 'click', function() {
+                    new google.maps.InfoWindow({ content: v.trip_id + " " + this.title }).open(map, marker);
+                  });
+                  markers[v.trip_id] = marker;
+                } else {
+                  var position = new google.maps.LatLng(v.vehicle.vehicle_lat, v.vehicle.vehicle_lon);
+                  markers[v.trip_id].setPosition(position);
+                };
+              });
             });
 
             loadIndex++;
