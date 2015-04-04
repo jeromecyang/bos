@@ -8,19 +8,37 @@
         margin: 0;
       }
       #cover {
-        background: url(https://lh4.googleusercontent.com/-mnlzdeDo76I/VCESL6Z-4YI/AAAAAAAAI3o/mkazy8XzMqM/h1150-no/IMAG3340.jpg) no-repeat center center fixed;
+        background: url(https://lh6.googleusercontent.com/-TG5zbKCrnNg/VSBVZ-oRwDI/AAAAAAAAJKo/0sqnusiKFvE/h1150-no/IMAG4465.jpg) no-repeat center center;
         background-size: cover;
+        width: 100%;
+        display: table;
+      }
+      #cover-container {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+      }
+      #cover-text {
+        margin-left: auto;
+        margin-right: auto; 
+        width: 100%;
+        font-family: "Gotham Rounded A", "Gotham Rounded B", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #fff;
+
       }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script>
       $(document).ready(function(){
         var cover = $("#cover").height($(window).height());
-
       });
     </script>
   </head>
   <body>
-    <div id="cover"></div>
+    <div id="cover">
+      <div id="cover-container">
+        <div id="cover-text">Three Gems in the Lower South</div>
+      </div>
+    </div>
   </body>
 </html>
