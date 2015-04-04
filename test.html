@@ -8,15 +8,15 @@
         margin: 0;
       }
       #cover {
-        background-color: #f00;
+        background: url(https://lh4.googleusercontent.com/-mnlzdeDo76I/VCESL6Z-4YI/AAAAAAAAI3o/mkazy8XzMqM/h1150-no/IMAG3340.jpg) no-repeat center center fixed;
+        background-size: cover;
       }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script>
       $(document).ready(function(){
-        console.log("I am ready");
+        var cover = $("#cover").height($(window).height());
 
-        var color = $("#cover").height($(window).height());
       });
     </script>
   </head>
