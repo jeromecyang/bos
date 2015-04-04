@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      html, body {
+        height: 1000px;
+        margin: 0;
+      }
+      #cover {
+        background-color: #f00;
+      }
+    </style>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        console.log("I am ready");
+
+        var color = $("#cover").height($(window).height());
+      });
+    </script>
   </head>
   <body>
-    <script>
-      document.write(window.innerHeight + "," + window.innerWidth);
-    </script>
+    <div id="cover"></div>
   </body>
 </html>
