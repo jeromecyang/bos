@@ -21,19 +21,25 @@
       }
       #story {
         max-width: 800px;
-        margin: 20px auto;
+        margin: 0 auto;
+        padding: 20px;
       }
       .title {
         font-family: abel, sans-serif;
         font-size: 48px;
+        line-height: 42px;
       }
-      .text {
+      .cover-text {
         font-family: jura, sans-serif;
         font-size: 18px;
       }
+      .text {
+        font-family: josefin-sans, serif;
+        font-size: 17px;
+      }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-    <script src="//use.edgefonts.net/abel;jura.js"></script>
+    <script src="//use.edgefonts.net/abel;jura;josefin-sans.js"></script>
     <script>
       $(document).ready(function(){
         var cover = $("#cover").height($(window).height());
@@ -44,7 +50,7 @@
     <div id="cover">
       <div id="cover-container">
         <div class="title">Three Gems in the Lower South</div>
-        <div class="text">
+        <div class="cover-text">
           <p>
             <div>CHARLESTON, SC</div>
             <div>SAVANNA, GA</div>
@@ -61,6 +67,9 @@
     </div>
     <div id="story">
       <div class="title">A spontaneous trip...</div>
+      <div class="text">
+        <p>I was not just missing the warmth, which I haven't enjoyed since moving back to New England</p>
+      </div>
     </div>
   </body>
 </html>
