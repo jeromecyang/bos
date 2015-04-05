@@ -18,18 +18,22 @@
         vertical-align: middle;
         text-align: center;
       }
-      #cover-text {
+      .cover-title {
         margin-left: auto;
         margin-right: auto; 
         width: 100%;
         font-family: abel, sans-serif;
         font-size: 48px;
         color: #fff;
-
+      }
+      .cover-text {
+        font-family: jura, sans-serif;
+        font-size: 18px;
+        color: #fff;
       }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-    <script src="//use.edgefonts.net/abel.js"></script>
+    <script src="//use.edgefonts.net/abel;jura.js"></script>
     <script>
       $(document).ready(function(){
         var cover = $("#cover").height($(window).height());
@@ -39,7 +43,20 @@
   <body>
     <div id="cover">
       <div id="cover-container">
-        <div id="cover-text">Three Gems in the Lower South</div>
+        <div class="cover-title">Three Gems in the Lower South</div>
+        <div class="cover-text">
+          <p>
+            <div>CHARLESTON, SC</div>
+            <div>SAVANNA, GA</div>
+            <div>ST AUGUSTINE, FL</div>
+          </p>
+          <p>
+            <div>MARCH 28 - 30, 2015</div>
+          </p>
+          <p>
+            <div>BY JEROME YANG</div>
+          </p>
+        </div>
       </div>
     </div>
   </body>
