@@ -45,7 +45,6 @@
         font-size: 28px;
       }
       .story img {
-        width: 100%;
         max-width: 600px;
         display: block;
         margin: 10px auto;
@@ -58,6 +57,7 @@
         $("#cover-0").css("background", "url(https://lh6.googleusercontent.com/-TG5zbKCrnNg/VSBVZ-oRwDI/AAAAAAAAJKo/0sqnusiKFvE/h800-no/IMAG4465.jpg) no-repeat center center");
         $("#cover-1").css("background", "url(https://lh3.googleusercontent.com/-PTasNiXYcCI/VSHfP7l7HLI/AAAAAAAAJLY/sNwzh4k9dGI/h800-no/IMAG4397.jpg) no-repeat center center");
         $(".cover").height($(window).height()).css("background-size", "cover");
+        $(".story img").width($(window).width()-40);
       });
     </script>
   </head>
