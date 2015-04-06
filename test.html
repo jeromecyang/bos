@@ -40,12 +40,18 @@
       .text-highlight {
         font-size: 28px;
       }
+      .full-page-photo {
+        background: url(https://lh3.googleusercontent.com/-VcoLiRenc4U/VSHWbf_eujI/AAAAAAAAJLE/YPInmAvkLx0/w888-h500-no/IMAG4362.jpg) no-repeat center center;
+        background-size: cover;
+        width: 100%;
+      }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="//use.edgefonts.net/abel;jura;josefin-sans.js"></script>
     <script>
       $(document).ready(function(){
         var cover = $("#cover").height($(window).height());
+        $(".full-page-photo").height($(window).height());
       });
     </script>
   </head>
@@ -75,7 +81,7 @@
         <p>It's not an easy trip to visit three states in three days. My strategy is: pick only one city in each state, fly to the first, take a train or bus from one to the next, and fly back from the last. These three cities are:</p>
         <p>
           <div class="text-highlight">Charleston, SC</div>
-          <div>Founded in 1670; used to be a state capital, trade center, and had ranked among the top 10 US cities over 100 years.</div>
+          <div>Founded in 1670; used to be a state capital, trade center, and had ranked among the top 10 US cities for over 100 years.</div>
         </p>
         <p>
           <div class="text-highlight">Savannah, GA</div>
@@ -87,5 +93,6 @@
         </o>
       </div>
     </div>
+    <div class="full-page-photo"></div>
   </body>
 </html>
