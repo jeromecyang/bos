@@ -19,8 +19,10 @@
             } else if (page.type === "story") {
               div = $("<div>").attr("class", "story").appendTo("body");
             } else if (page.type === "short-story") {
-              div = $("<div>").attr("class", "story").appendTo("body");
-              $("<img>").attr("src", page.imageUrl).width($(window).width()-40).appendTo(div);
+              var shortStoryBase = $("<div>").attr("class", "short-story").appendTo("body");
+              var shortStoryLeft = $("<div>").attr("class", "short-story-left").appendTo(shortStoryBase);
+              div = $("<div>").attr("class", "short-story-right").appendTo(shortStoryBase);
+              $("<img>").attr("src", page.imageUrl).width($(window).width()-40).appendTo(shortStoryLeft);
             };
 
             $("<div>").attr("class", "title").text(page.title).appendTo(div);

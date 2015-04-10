@@ -12,7 +12,7 @@ html, body {
   text-align: center;
   color: #fff;
 }
-.story {
+.story, .short-story {
   max-width: 800px;
   margin: 0 auto;
   padding: 10px 20px;
@@ -24,6 +24,10 @@ html, body {
 }
 .story .title {
   line-height: 60px;
+}
+.short-story .title {
+  font-size: 28px;
+  line-height: 36px;
 }
 .cover .text {
   font-family: jura, sans-serif;
@@ -39,8 +43,12 @@ html, body {
 .text-highlight {
   font-size: 28px;
 }
-.story img {
-  max-width: 600px;
+.short-story img {
+  max-width: 300px;
   display: block;
-  margin: 10px auto;
+  margin: 10px 0 10px 0;
+}
+.short-story>div {
+  display: inline-block;
+  vertical-align: top;
 }
