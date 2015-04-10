@@ -7,12 +7,27 @@
         height: 100%;
         margin: 0;
       }
-      body {
-        background-color: #000;
+      #menu {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+      }
+      #menu .icon {
+        margin: 5px;
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        text-align: center;
+        line-height: 50px;
+        white-space: nowrap;
+        background-color: #888;
+        font-family: abel, sans-serif;
+        cursor: pointer;
       }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script src="//use.edgefonts.net/abel.js"></script>
     <script>
       $(document).ready(function(){
         var routeId = (location.search !== "") ? location.search.replace(/\?route=/g, "") : "Green-B";
@@ -110,5 +125,11 @@
   </head>
   <body>
     <div id="map"></div>
+    <div id="menu">
+      <div class="icon" style="background-color: #E12D27">Red</div>
+      <div class="icon" style="background-color: #427B1D">Green-B</div>
+      <div class="icon">1</div>
+      <div class="icon">66</div>
+    </div>
   </body>
 </html>
