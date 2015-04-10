@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="styles.css"></link>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="//use.edgefonts.net/abel;jura;josefin-sans.js"></script>
+    <script>
+      $(document).ready(function(){
+        $.getJSON("lower-south.json").done(function(data){
+          document.title = data.title;
+          data.pages.forEach(function(page){
+
+            var div;
+            if (page.type === "cover") {
+              var cover = $("<div>").attr("class", "cover").height($(window).height());
+              cover.css("background", "url(" + page.backgroundUrl + ") no-repeat center center").css("background-size", "cover").appendTo("body");
+              div = $("<div>").attr("class", "cover-container").appendTo(cover);
+            } else if (page.type === "story") {
+              div = $("<div>").attr("class", "story").appendTo("body");
+            } else if (page.type === "short-story") {
+              div = $("<div>").attr("class", "story").appendTo("body");
+              $("<img>").attr("src", page.imageUrl).width($(window).width()-40).appendTo(div);
+            };
+
+            $("<div>").attr("class", "title").text(page.title).appendTo(div);
+
+            var text;
+            if (page.text instanceof Array) {
+              text = page.text.map(function(subText){
+                if (subText instanceof Array) {
+                  subText = subText.map(function(_subText){ return "<div>" + _subText + "</div>" }).join("");
+                };
+                return "<p>" + subText + "</p>";
+              }).join("");
+            } else {
+              text = page.text;
+            };
+            $("<div>").attr("class", "text").html(text).appendTo(div);
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
