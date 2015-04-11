@@ -9,13 +9,14 @@
       }
       #menu {
         position: fixed;
-        right: 20px;
-        top: 20px;
+        right: 0;
+        top: 0;
       }
       #menu .icon {
-        margin: 5px;
+        margin: 10px;
         width: 50px;
         height: 50px;
+        border: 0.5px solid #888;
         border-radius: 25px;
         text-align: center;
         line-height: 50px;
@@ -23,6 +24,7 @@
         background-color: #888;
         font-family: abel, sans-serif;
         cursor: pointer;
+        color: #fff;
       }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
@@ -30,7 +32,7 @@
     <script src="//use.edgefonts.net/abel.js"></script>
     <script>
       $(document).ready(function(){
-        var routeId = (location.search !== "") ? location.search.replace(/\?route=/g, "") : "Green-B";
+        var routeId = "Green-B";
 
         var map = new google.maps.Map($("#map")[0], {
           zoom: 14,
@@ -53,25 +55,43 @@
             stylers: [{ color: '#181818' }]
           }
         ]));
-
-        map.data.loadGeoJson("routes/" + routeId + ".json", null, function(){
-          map.data.setStyle({ strokeColor: "#427b1d" });
-          var bounds = new google.maps.LatLngBounds();
-          map.data.forEach(function(feature){
-            feature.getGeometry().getArray().forEach(function(latLng){
-              bounds.extend(latLng);
-            });
-          });
-          map.fitBounds(bounds);
-        });
-        
-        
         var markers = {};
         var loadIndex = 0;
 
+        loadRoute();
         loadTransitData();
+        $("#menu .icon").on("click", function(){
+          routeId = $(this).attr("data-route");
+          loadRoute();
+          requestTransitData();
+        });
+
+        function loadRoute() {
+          map.data.forEach(function(feature){
+            map.data.remove(feature);
+          });
+
+          map.data.loadGeoJson("routes/" + routeId + ".json", null, function(){
+            map.data.setStyle({ strokeColor: "#427b1d" });
+            var bounds = new google.maps.LatLngBounds();
+            map.data.forEach(function(feature){
+              feature.getGeometry().getArray().forEach(function(latLng){
+                bounds.extend(latLng);
+              });
+            });
+            map.fitBounds(bounds);
+          });
+        };
+
+        function loadTransitData() {
+          requestTransitData();
+          loadIndex++;
+          if (loadIndex < 200) {
+            setTimeout(loadTransitData, 10000);
+          };
+        };
         
-        function loadTransitData(){
+        function requestTransitData() {
           $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=" + routeId + "&format=json").done(function(transitData){
 
             var tripIds = [];
@@ -82,6 +102,7 @@
             $.each(transitData.direction, function(i, direction){
               $.each(markers, function(id, marker){
                 if (tripIds.indexOf(id) === -1){
+                  markers[id].setMap(null);
                   delete markers[id];
                 };
               });
@@ -110,14 +131,6 @@
                 };
               });
             });
-
-            loadIndex++;
-            
-            if (loadIndex < 200) {
-              setTimeout(function(){
-                loadTransitData();
-              }, 15000);
-            };
           });
         };
       });
@@ -126,10 +139,10 @@
   <body>
     <div id="map"></div>
     <div id="menu">
-      <div class="icon" style="background-color: #E12D27">Red</div>
-      <div class="icon" style="background-color: #427B1D">Green-B</div>
-      <div class="icon">1</div>
-      <div class="icon">66</div>
+      <div class="icon" style="background-color: #E12D27" data-route="Red">Red</div>
+      <div class="icon" style="background-color: #427B1D" data-route="Green-B">Green-B</div>
+      <div class="icon" data-route="1">1</div>
+      <div class="icon" data-route="66">66</div>
     </div>
   </body>
 </html>

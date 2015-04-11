@@ -15,19 +15,28 @@ html, body {
 .story, .short-story {
   max-width: 800px;
   margin: 0 auto;
-  padding: 10px 20px;
+  padding: 30px 20px;
 }
 .title {
   font-family: abel, sans-serif;
   font-size: 48px;
   line-height: 42px;
+  margin: 8px 0;
 }
 .story .title {
-  line-height: 60px;
+  color: #74276d;
+  text-align: center;
 }
-.short-story .title {
+.short-story .title, .story .text-highlight {
+  color: #74276d;
+  text-align: center;
   font-size: 28px;
-  line-height: 36px;
+}
+.short-story-photo {
+  width: 320px;
+  height: 320px;
+  border-radius: 160px;
+  margin: 0 auto;
 }
 .cover .text {
   font-family: jura, sans-serif;
@@ -38,17 +47,8 @@ html, body {
   font-size: 17px;
 }
 .text p {
-  margin: 10px 0;
+  margin: 20px 0;
 }
-.text-highlight {
-  font-size: 28px;
-}
-.short-story img {
-  max-width: 300px;
-  display: block;
-  margin: 10px 0 10px 0;
-}
-.short-story>div {
-  display: inline-block;
-  vertical-align: top;
+.short-story .text {
+  text-align: center;
 }

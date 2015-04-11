@@ -28,16 +28,16 @@
       ]
     },
     {
-      "type": "short-story",
-      "imageUrl": "https://lh3.googleusercontent.com/-VcoLiRenc4U/VSHWbf_eujI/AAAAAAAAJLE/YPInmAvkLx0/w888-h500-no/IMAG4362.jpg",
-      "title": "Charlotte Douglas Int'l Airport",
-      "text": "A 2-hour layover gave me the first chance to grasp the feeling of \"south\"."
-    },
-    {
       "type": "cover",
       "backgroundUrl": "https://lh3.googleusercontent.com/-PTasNiXYcCI/VSHfP7l7HLI/AAAAAAAAJLY/sNwzh4k9dGI/h800-no/IMAG4397.jpg",
       "title": "Day 1: Charleston, SC",
       "text": ""
+    },
+    {
+      "type": "short-story",
+      "imageUrl": "https://lh3.googleusercontent.com/-VcoLiRenc4U/VSHWbf_eujI/AAAAAAAAJLE/YPInmAvkLx0/w888-h500-no/IMAG4362.jpg",
+      "title": "Charlotte Douglas Int'l Airport",
+      "text": "A 2-hour layover gave me the first chance to grasp the feeling of \"south\"."
     }
   ]
 }
