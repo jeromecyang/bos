@@ -31,13 +31,27 @@
       "type": "cover",
       "backgroundUrl": "https://lh3.googleusercontent.com/-PTasNiXYcCI/VSHfP7l7HLI/AAAAAAAAJLY/sNwzh4k9dGI/h800-no/IMAG4397.jpg",
       "title": "Day 1: Charleston, SC",
-      "text": ""
+      "text": "Boston - Charlotte - Charleston - Savannah"
+    },
+    {
+      "type": "story",
+      "text": [
+        "<div class='title'>4AM, Boston Logan Int'l Airport</div>",
+        "I started this trip with an early flight: 5am, Boston to Charlotte. A Uber got me to the airport before the T started running. This is my first time leaving this city since moving back from California. I shared my excitement with the driver. After two flights and one 2-hour layover in between, I will be in a place I've never been. I thought.",
+        "The layover in Charlotte gave me the first glimpse of the \"South\". As waiting for the connecting flight, I watched people come and go, looked at destinations shown on boarding gates, and tried to tell what's different here. Soon I realized it's probably better to hold on until I actually get there and walk out of the airport."
+      ]
     },
     {
       "type": "short-story",
       "imageUrl": "https://lh3.googleusercontent.com/-VcoLiRenc4U/VSHWbf_eujI/AAAAAAAAJLE/YPInmAvkLx0/w888-h500-no/IMAG4362.jpg",
       "title": "Charlotte Douglas Int'l Airport",
-      "text": "A 2-hour layover gave me the first chance to grasp the feeling of \"south\"."
+      "text": "This airport introduces natural light and lots of plants into the terminal. People seemed to walk slower, although still not much different from other airports."
+    },
+    {
+      "type": "story",
+      "text": [
+        "I arrived in Charleston Airport without delay. After picking my rental car, I drove stright to Mongnolia Garden and Plantation."
+      ]
     }
   ]
 }
