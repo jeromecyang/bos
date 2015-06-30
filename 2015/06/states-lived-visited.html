@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>US states I have lived in or visited | Jerome Yang's Visualization</title>
+    <title>US states I have lived in or visited | Jerome Yang's Data Vistro</title>
     <style>
       #map {
         margin: auto;
@@ -11,7 +11,7 @@
         margin: 25px auto 5px auto;
         width: 800px;
         text-align: center;
-        font: 42px poiret-one, sans-serif;
+        font: 42px source-sans-pro, sans-serif;
       }
       #info {
         margin: auto;
@@ -40,12 +40,12 @@
       }
     </style>
   	<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
-    <script src="//use.edgefonts.net/poiret-one.js"></script>
+    <script src="//use.edgefonts.net/source-sans-pro:n7.js"></script>
   </head>
   <body>
     <div id="map"></div>
     <div id="desc">US states I have <span style="background: #801515">lived in</span> or <span style="background: #ffaaaa">visited</span></div>
-    <div id="info">Jerome Yang's Visualization |
+    <div id="info">Jerome Yang's Data Vistro |
       <img src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png">
       <img src="http://ofnrforever.com/wp-content/uploads/2014/08/iconmonstr-email-4-icon.png">
       <img src="http://png-2.findicons.com/files/icons/2779/simple_icons/128/twitter_128_black.png">
@@ -70,8 +70,8 @@
           .classed("visited", function(d){ return visited.indexOf(d.properties.STUSPS) !== -1 })
           .classed("lived", function(d){ return lived.indexOf(d.properties.STUSPS) !== -1 });
         var tooltip = svg.append("g").attr({ display: "none" });
-        tooltip.append("rect").attr({ width: 100, height: 20, y: -20, fill: "#000", "fill-opacity": 0.6 });
-        var tooltipText = tooltip.append("text").attr({ x: 5, y: -5, fill: "#fff"});
+        tooltip.append("rect").attr({ width: 100, height: 20, x: 5, y: -25, fill: "#000", "fill-opacity": 0.6 });
+        var tooltipText = tooltip.append("text").attr({ x: 10, y: -10, fill: "#fff"});
         paths.on("mouseenter", function(d){ tooltip.attr("display", "block"); tooltipText.text(d.properties.NAME) })
           .on("mousemove", function(){ tooltip.attr("transform", "translate(" + d3.event.offsetX + ", " + d3.event.offsetY + ")") })
           .on("mouseleave", function(){ tooltip.attr("display", "none") });
