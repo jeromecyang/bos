@@ -12,27 +12,13 @@
         right: 0;
         top: 0;
       }
-      #menu .icon {
-        margin: 10px;
-        width: 50px;
-        height: 50px;
-        border: 0.5px solid #888;
-        border-radius: 25px;
-        text-align: center;
-        line-height: 50px;
-        white-space: nowrap;
-        background-color: #888;
-        font-family: abel, sans-serif;
-        cursor: pointer;
-        color: #fff;
-      }
     </style>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
     <script src="//use.edgefonts.net/abel.js"></script>
     <script>
       $(document).ready(function(){
-        var routeId = "Green-B";
+        var routeId; // = "Green-B";
 
         var map = new google.maps.Map($("#map")[0], {
           zoom: 14,
@@ -58,40 +44,37 @@
         var markers = {};
         var loadIndex = 0;
 
-        loadRoute();
-        loadTransitData();
-        $("#menu .icon").on("click", function(){
-          routeId = $(this).attr("data-route");
-          loadRoute();
-          requestTransitData();
+        $.getJSON("http://realtime.mbta.com/developer/api/v2/routes?api_key=wX9NwuHnZU2ToO7GmGR9uw&format=json").done(function(routeData){
+          var routes = [];
+          routeData.mode.forEach(function(mode){
+            routes = routes.concat(mode.route);
+          });
+          var selectMenu = $("#select");
+          routes.forEach(function(route){
+            $("<option>").attr("value", route.route_id).text(route.route_name).appendTo(selectMenu);
+          });
+          selectMenu.on("change", function(evt){
+            routeId = evt.target.value;
+            loadTransitData(true);
+            zoomToMarkers();
+          });
+
+          routeId = routes[0].route_id;
+          loadTransitData();
         });
 
-        function loadRoute() {
-          map.data.forEach(function(feature){
-            map.data.remove(feature);
-          });
-
-          map.data.loadGeoJson("routes/" + routeId + ".json", null, function(){
-            map.data.setStyle({ strokeColor: "#427b1d" });
-            var bounds = new google.maps.LatLngBounds();
-            map.data.forEach(function(feature){
-              feature.getGeometry().getArray().forEach(function(latLng){
-                bounds.extend(latLng);
-              });
-            });
-            map.fitBounds(bounds);
-          });
-        };
-
-        function loadTransitData() {
-          requestTransitData();
+        function loadTransitData(zoomTo) {
+          requestTransitData(zoomTo);
           loadIndex++;
+
           if (loadIndex < 200) {
-            setTimeout(loadTransitData, 10000);
+            setTimeout(function(){
+              loadTransitData(false);
+            }, 10000);
           };
         };
         
-        function requestTransitData() {
+        function requestTransitData(zoomTo) {
           $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=" + routeId + "&format=json").done(function(transitData){
 
             var tripIds = [];
@@ -131,18 +114,25 @@
                 };
               });
             });
+
+            if (zoomTo){
+              zoomToMarkers();
+            };
           });
+        };
+
+        function zoomToMarkers(){
+          var bounds = new google.maps.LatLngBounds();
+          Object.keys(markers).forEach(function(markerKey){
+            bounds.extend(markers[markerKey].getPosition());
+          });
+          map.fitBounds(bounds);
         };
       });
     </script>
   </head>
   <body>
     <div id="map"></div>
-    <div id="menu">
-      <div class="icon" style="background-color: #E12D27" data-route="Red">Red</div>
-      <div class="icon" style="background-color: #427B1D" data-route="Green-B">Green-B</div>
-      <div class="icon" data-route="1">1</div>
-      <div class="icon" data-route="66">66</div>
-    </div>
+    <div id="menu"><select id="select"></select></div>
   </body>
 </html>
