@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>2015 End of the Year Trip | Jerome Yang's Data Vistro</title>
+    <style>
+      body {
+        background-color: #000;
+      }
+      #map {
+        margin: auto;
+        width: 960px;
+      }
+    </style>
+  	<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+  	<script>
+      var trip = {
+        stops: {
+          "Boston": [-71.0588801, 42.3600825],
+          "Edison, NJ": [-74.4120953, 40.5187154],
+          "Winchester, VA": [-78.1633341, 39.1856597],
+          "Shenandoah National Park": [-78.6795836, 38.29275579999999],
+          "Wytheville, VA": [-81.084811, 36.9484528],
+          "Great Smoky Mountain National Park": [-83.4895449, 35.6117644],
+          "Knoxville": [-83.9207392, 35.9606384],
+          "Mammoth Cave National Park": [-86.100528, 37.1869978],
+          "Nashville": [-86.7816016, 36.1626638],
+          "Jackson, MS": [-90.1848103, 32.2987573],
+          "New Orleans": [-90.0715323, 29.95106579999999],
+          "Greenville, AL": [-86.6177517, 31.8295972],
+          "Atlanta": [-84.3879824, 33.7489954],
+          "Greenville, SC": [-82.3940104, 34.85261759999999],
+          "Durham": [-78.898619, 35.9940329]
+        },
+        segments: [
+          { day: 1, route: ["Boston", "Edison, NJ", "Winchester, VA"] },
+          { day: 2, route: ["Winchester, VA", "Shenandoah National Park", "Wytheville, VA"] },
+          { day: 3, route: ["Wytheville, VA", "Great Smoky Mountain National Park", "Knoxville"] },
+          { day: 4, route: ["Knoxville", "Mammoth Cave National Park", "Nashville"] },
+          { day: 5, route: ["Nashville", "Jackson, MS"] },
+          { day: 6, route: ["Jackson, MS", "New Orleans"] },
+          { day: 7, route: ["New Orleans", "Greenville, AL"] },
+          { day: 8, route: ["Greenville, AL", "Atlanta", "Greenville, SC", "Durham"] },
+          { day: 9, route: ["Durham", "Edison, NJ", "Boston"] }
+        ]
+      };
+
+  	  d3.json("geodata/us_states.json", function(error, geojson) {
+        if (!error) {
+          map(geojson);
+        };
+  	  });
+
+      function map(geojson){
+        var svg = d3.select("#map").append("svg").attr({ width: 960, height: 600 });
+        var g = svg.append("g").attr({ transform: "translate(1100,1125) rotate(210)" });
+        var projection = d3.geo.albersUsa().scale(2250);
+        var paths = g.selectAll("path").data(geojson.features.filter(function(f){
+          return ["HI", "AK"].indexOf(f.properties.STUSPS) === -1;
+        })).enter().append("path").attr({
+          d: d3.geo.path().projection(projection),
+          fill: "#222",
+          stroke: "#000",
+          "stroke-width": 0.25
+        });
+
+        var segmentsData = [];
+        trip.segments.forEach(function(segment){
+          segment.route.forEach(function(stop, i){
+            if (i<segment.route.length-1){
+              segmentsData.push({ from: segment.route[i], to: segment.route[i+1] });
+            };
+          });
+        });
+        g.selectAll("path.segment").data(segmentsData).enter().append("path").attr({
+          class: "segment",
+          d: function(d){
+            var from = projection(trip.stops[d.from]);
+            var to = projection(trip.stops[d.to]);
+            var diffX = to[0]-from[0];
+            var diffY = to[1]-from[1];
+            var mid1 = [0.75*from[0]+0.25*to[0]-0.25*diffY, 0.75*from[1]+0.25*to[1]+0.25*diffX];
+            var mid2 = [0.25*from[0]+0.75*to[0]-0.25*diffY, 0.25*from[1]+0.75*to[1]+0.25*diffX];
+            return "M" + from + "C" + mid1 + " " + mid2 + " " + to;
+          },
+          stroke: "#888",
+          fill: "none"
+        });
+
+        var stopsData = Object.keys(trip.stops).map(function(name){ return { name: name, location: trip.stops[name] } });
+        g.selectAll("circle.stop").data(stopsData).enter().append("circle").attr({
+          class: "stop",
+          cx: function(stop){ return projection(stop.location)[0] },
+          cy: function(stop){ return projection(stop.location)[1] },
+          r: 3,
+          fill: "#fff"
+        });
+        g.selectAll("text.stop-name").data(stopsData).enter().append("text").attr({
+          class: "stop-name",
+          fill: "#fff",
+          "font-size": 10,
+          "font-family": "Arial",
+          transform: function(d){ return "translate(" + [projection(d.location)[0]-5, projection(d.location)[1]+5] + ") rotate(150)" }
+        }).text(function(d){ return d.name });
+      };
+  	</script>
+  </body>
+</html>
