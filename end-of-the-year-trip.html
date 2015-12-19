@@ -64,20 +64,29 @@
           fill: "#222",
           stroke: "#000",
           "stroke-width": 0.25
+        }).each(function(d){
+          var bbox = d3.select(this).node().getBBox();
+          g.append("text").attr({
+            fill: "#444",
+            "font-size": 14,
+            "font-family": "Arial",
+            transform: "translate(" + (bbox.x+0.5*bbox.width) + "," + (bbox.y+0.5*bbox.height) + ") rotate(-210)"
+          }).text(d.properties.STUSPS);
         });
 
         var segmentsData = [];
         trip.segments.forEach(function(segment){
           segment.route.forEach(function(stop, i){
             if (i<segment.route.length-1){
-              segmentsData.push({ from: segment.route[i], to: segment.route[i+1] });
+              segmentsData.push({ day: segment.day, from: segment.route[i], to: segment.route[i+1] });
             };
           });
         });
         g.selectAll("path.segment").data(segmentsData).enter().append("path").attr({
-          class: "segment",
+          class: function(d){ return "segment day-" + d.day },
           d: function(d){ return bezier(projection(trip.stops[d.from]), projection(trip.stops[d.to])) },
           stroke: "#888",
+          "stroke-width": 1.5,
           fill: "none"
         });
 
@@ -96,6 +105,27 @@
           "font-family": "Arial",
           transform: function(d){ return "translate(" + [projection(d.location)[0]-5, projection(d.location)[1]+5] + ") rotate(150)" }
         }).text(function(d){ return d.name });
+
+        var gInfo = svg.append("g");
+        gInfo.append("text").attr({
+          "font-family": "Arial",
+          "font-size": 48,
+          fill: "#fff",
+          y: 48
+        }).text("End of 2015: Drive to New Orleans!");
+        gInfo.selectAll("text.info-text").data(trip.segments).enter().append("text").attr({
+          class: function(d){ return "info-text day-" + d.day },
+          y: function(d, i){ return 60+16*(i+1) },
+          "font-size": 12,
+          "font-family": "Arial",
+          fill: "#fff"
+        }).text(function(d){ return "Day " + d.day + " | " + d.route.join(" - ") }).on("mouseenter", function(d){
+          svg.selectAll(".segment.day-" + d.day).transition().attr({ stroke: "#ff0" });
+          svg.selectAll(".info-text.day-" + d.day).transition().attr({ fill: "#ff0" });
+        }).on("mouseleave", function(d){
+          svg.selectAll(".segment.day-" + d.day).transition().attr({ stroke: "#888" });
+          svg.selectAll(".info-text.day-" + d.day).transition().attr({ fill: "#fff" });
+        });
       };
 
       function bezier(from, to){
