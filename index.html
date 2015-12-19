@@ -44,7 +44,7 @@
         var markers = {};
         var loadIndex = 0;
 
-        $.getJSON("http://realtime.mbta.com/developer/api/v2/routes?api_key=wX9NwuHnZU2ToO7GmGR9uw&format=json").done(function(routeData){
+        $.getJSON("http://realtime.mbta.com/developer/api/v2/routes?api_key=A9v45JvEpUC_xdq0ClEY9w&format=json").done(function(routeData){
           var routes = [];
           routeData.mode.forEach(function(mode){
             routes = routes.concat(mode.route);
@@ -75,7 +75,7 @@
         };
         
         function requestTransitData(zoomTo) {
-          $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=wX9NwuHnZU2ToO7GmGR9uw&route=" + routeId + "&format=json").done(function(transitData){
+          $.getJSON("//realtime.mbta.com/developer/api/v2/vehiclesbyroute?api_key=A9v45JvEpUC_xdq0ClEY9w&route=" + routeId + "&format=json").done(function(transitData){
 
             var tripIds = [];
             $.each(transitData.direction, function(i, direction){

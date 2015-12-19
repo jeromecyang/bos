@@ -76,15 +76,7 @@
         });
         g.selectAll("path.segment").data(segmentsData).enter().append("path").attr({
           class: "segment",
-          d: function(d){
-            var from = projection(trip.stops[d.from]);
-            var to = projection(trip.stops[d.to]);
-            var diffX = to[0]-from[0];
-            var diffY = to[1]-from[1];
-            var mid1 = [0.75*from[0]+0.25*to[0]-0.25*diffY, 0.75*from[1]+0.25*to[1]+0.25*diffX];
-            var mid2 = [0.25*from[0]+0.75*to[0]-0.25*diffY, 0.25*from[1]+0.75*to[1]+0.25*diffX];
-            return "M" + from + "C" + mid1 + " " + mid2 + " " + to;
-          },
+          d: function(d){ return bezier(projection(trip.stops[d.from]), projection(trip.stops[d.to])) },
           stroke: "#888",
           fill: "none"
         });
@@ -104,6 +96,14 @@
           "font-family": "Arial",
           transform: function(d){ return "translate(" + [projection(d.location)[0]-5, projection(d.location)[1]+5] + ") rotate(150)" }
         }).text(function(d){ return d.name });
+      };
+
+      function bezier(from, to){
+        var diffX = to[0]-from[0];
+        var diffY = to[1]-from[1];
+        var mid1 = [0.75*from[0]+0.25*to[0]-0.25*diffY, 0.75*from[1]+0.25*to[1]+0.25*diffX];
+        var mid2 = [0.25*from[0]+0.75*to[0]-0.25*diffY, 0.25*from[1]+0.75*to[1]+0.25*diffX];
+        return "M" + from + "C" + mid1 + " " + mid2 + " " + to;
       };
   	</script>
   </body>
