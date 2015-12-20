@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  background: #000;
+}
+
+.stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+.fill {
+  fill: #fff;
+}
+
+.graticule {
+  fill: none;
+  stroke: #777;
+  stroke-width: .5px;
+  stroke-opacity: .5;
+}
+
+.land {
+  fill: #222;
+}
+
+.boundary {
+  fill: none;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script>
+
+function d3_geo_azimuthal(scale, angle) {
+  function azimuthal(λ, φ) {
+    var cosλ = Math.cos(λ),
+        cosφ = Math.cos(φ),
+        k = scale(cosλ * cosφ);
+    return [
+      k * cosφ * Math.sin(λ),
+      k * Math.sin(φ)
+    ];
+  }
+
+  azimuthal.invert = function(x, y) {
+    var ρ = Math.sqrt(x * x + y * y),
+        c = angle(ρ),
+        sinc = Math.sin(c),
+        cosc = Math.cos(c);
+    return [
+      Math.atan2(x * sinc, ρ * cosc),
+      Math.asin(ρ && y * sinc / ρ)
+    ];
+  };
+
+  return azimuthal;
+}
+
+var temp = [];
+
+var d3_geo_azimuthalEquidistant = d3_geo_azimuthal(
+  //function(cosλcosφ) { var c = Math.acos(cosλcosφ); return c && c / Math.sin(c); },
+  function(cosλcosφ) {
+    var c = Math.acos(cosλcosφ);
+    var output = c && c / Math.sin(c);
+    return Math.log(output+1);
+  },
+  function(d) {
+    return d;
+  }
+);
+
+
+var width = 960,
+    height = 540;
+
+var projection = d3.geo.projection(d3_geo_azimuthalEquidistant)
+    .scale(800)
+    .rotate([71, -42, -70])
+    .translate([width*0.22, height*0.95])
+    .clipAngle(120)
+    .precision(.1);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var graticule = d3.geo.graticule();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("defs").append("path")
+    .datum({type: "Sphere"})
+    .attr("id", "sphere")
+    .attr("d", path)
+    .attr("fill", "#333");
+
+svg.append("use")
+    .attr("class", "stroke")
+    .attr("xlink:href", "#sphere");
+
+svg.append("use")
+    .attr("class", "fill")
+    .attr("xlink:href", "#sphere");
+
+svg.append("path")
+    .datum(graticule)
+    .attr("class", "graticule")
+    .attr("d", path);
+
+d3.json("geodata/world-50m.json", function(error, world) {
+  if (error) throw error;
+
+  //svg.insert("path", ".graticule")
+  svg.append("path")
+      .datum(topojson.feature(world, world.objects.land))
+      .attr("class", "land")
+      .attr("d", path);
+
+  //svg.insert("path", ".graticule")
+  svg.append("path")
+      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
+      .attr("class", "boundary")
+      .attr("d", path);
+
+  var pt1 = [-71.0588801, 42.3600825];
+  var pt2 = [121.5654177, 25.0329694];
+
+  svg.append("circle").attr({
+    cx: projection(pt1)[0],
+    cy: projection(pt1)[1],
+    r: 6,
+    fill: "#ff0"
+  });
+
+  svg.append("circle").attr({
+    cx: projection(pt2)[0],
+    cy: projection(pt2)[1],
+    r: 6,
+    fill: "#ff0"
+  });
+
+  svg.append("path").attr({
+    //d: "M" + projection(pt1) + "L" + projection(pt2),
+    d: bezier(projection(pt2), projection(pt1)),
+    stroke: "#ff0",
+    fill: "none"
+  });
+});
+
+function bezier(from, to){
+  var diffX = to[0]-from[0];
+  var diffY = to[1]-from[1];
+  var mid1 = [0.75*from[0]+0.25*to[0]-0.25*diffY, 0.75*from[1]+0.25*to[1]+0.25*diffX];
+  var mid2 = [0.25*from[0]+0.75*to[0]-0.25*diffY, 0.25*from[1]+0.75*to[1]+0.25*diffX];
+  return "M" + from + "C" + mid1 + " " + mid2 + " " + to;
+};
+
+d3.select(self.frameElement).style("height", height + "px");
+
+</script>
