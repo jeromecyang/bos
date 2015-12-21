@@ -1,159 +1,124 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-
 body {
   background: #000;
 }
-
-.stroke {
-  fill: none;
-  stroke: #000;
-  stroke-width: 3px;
+.sphere {
+  fill: #111;
 }
-
-.fill {
-  fill: #fff;
-}
-
 .graticule {
   fill: none;
   stroke: #777;
   stroke-width: .5px;
   stroke-opacity: .5;
 }
-
-.land {
+.country {
   fill: #222;
-}
-
-.boundary {
-  fill: none;
-  stroke: #fff;
+  stroke: #333;
   stroke-width: .5px;
 }
-
+.stop {
+  fill: #fff;
+}
+.segment {
+  fill: none;
+  stroke: #ff0;
+}
 </style>
 <body>
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script src="//d3js.org/topojson.v1.min.js"></script>
 <script>
+var segments = [
+  { trip: "atlantic-south", from: "Boston", to: "Charleston, SC" },
+  { trip: "atlantic-south", from: "Charleston, SC", to: "Savannah, GA" },
+  { trip: "atlantic-south", from: "Savannah, GA", to: "Jacksonville, FL" },
+  { trip: "atlantic-south", from: "Jacksonville, FL", to: "Boston" },
+  { trip: "texas", from: "Boston", to: "Houston" },
+  { trip: "texas", from: "Houston", to: "Austin" },
+  { trip: "texas", from: "Austin", to: "San Antonio" },
+  { trip: "texas", from: "San Antonio", to: "Houston" },
+  { trip: "texas", from: "Houston", to: "Boston" },
+  { trip: "new-york", from: "Boston", to: "New York" },
+  { trip: "new-york", from: "New York", to: "Boston" },
+  { trip: "acadia", from: "Boston", to: "Acadia National Park" },
+  { trip: "acadia", from: "Acadia National Park", to: "Boston" },
+  { trip: "taiwan-1", from: "Boston", to: "New York" },
+  { trip: "taiwan-1", from: "New York", to: "Taipei" },
+  { trip: "taiwan-1", from: "Taipei", to: "New York" },
+  { trip: "taiwan-1", from: "New York", to: "Taipei" },
+  { trip: "yellowstone", from: "Boston", to: "Salt Lake City" },
+  { trip: "yellowstone", from: "Salt Lake City", to: "Yellowstone National Park" },
+  { trip: "yellowstone", from: "Yellowstone National Park", to: "Salt Lake City" },
+  { trip: "yellowstone", from: "Salt Lake City", to: "Boston" },
+  { trip: "taiwan-2", from: "Boston", to: "Houston" },
+  { trip: "taiwan-2", from: "Houston", to: "Taipei" },
+  { trip: "taiwan-2", from: "Taipei", to: "Seoul" },
+  { trip: "taiwan-2", from: "Seoul", to: "Boston" },
+  { trip: "quebec", from: "Boston", to: "Quebec City" },
+  { trip: "quebec", from: "Quebec City", to: "Boston" }
+];
 
+//collect stops data
+var stops = {};
+segments.forEach(function(seg){
+  if (Object.keys(stops).indexOf(seg.from) === -1) {
+    stops[seg.from] = [];
+  };
+  stops[seg.from].push(seg.trip);
+  if (Object.keys(stops).indexOf(seg.to) === -1) {
+    stops[seg.to] = [];
+  };
+  stops[seg.to].push(seg.trip);
+});
+
+//these 2 functions are taken from d3's source; the second one is modified to improve the visualization
 function d3_geo_azimuthal(scale, angle) {
   function azimuthal(λ, φ) {
-    var cosλ = Math.cos(λ),
-        cosφ = Math.cos(φ),
-        k = scale(cosλ * cosφ);
-    return [
-      k * cosφ * Math.sin(λ),
-      k * Math.sin(φ)
-    ];
+    var cosλ = Math.cos(λ), cosφ = Math.cos(φ), k = scale(cosλ * cosφ);
+    return [k * cosφ * Math.sin(λ), k * Math.sin(φ)];
   }
-
   azimuthal.invert = function(x, y) {
-    var ρ = Math.sqrt(x * x + y * y),
-        c = angle(ρ),
-        sinc = Math.sin(c),
-        cosc = Math.cos(c);
-    return [
-      Math.atan2(x * sinc, ρ * cosc),
-      Math.asin(ρ && y * sinc / ρ)
-    ];
+    var ρ = Math.sqrt(x * x + y * y), c = angle(ρ), sinc = Math.sin(c), cosc = Math.cos(c);
+    return [Math.atan2(x * sinc, ρ * cosc), Math.asin(ρ && y * sinc / ρ)];
   };
-
   return azimuthal;
-}
-
-var temp = [];
-
+};
 var d3_geo_azimuthalEquidistant = d3_geo_azimuthal(
-  //function(cosλcosφ) { var c = Math.acos(cosλcosφ); return c && c / Math.sin(c); },
   function(cosλcosφ) {
     var c = Math.acos(cosλcosφ);
-    var output = c && c / Math.sin(c);
-    return Math.log(output+1);
+    return Math.log((c && c / Math.sin(c)) + 1);
   },
-  function(d) {
-    return d;
-  }
+  function(d) { return d }
 );
 
+var width = 960, height = 540;
+var projection = d3.geo.projection(d3_geo_azimuthalEquidistant).scale(800).rotate([71, -42, -70])
+  .translate([width*0.22, height*0.95]).clipAngle(120).precision(.1);
+var path = d3.geo.path().projection(projection);
 
-var width = 960,
-    height = 540;
+var svg = d3.select("body").append("svg").attr({ width: width, height: height });
+svg.append("path").datum({type: "Sphere"}).attr({ class: "sphere", d: path })
+svg.append("path").datum(d3.geo.graticule()).attr({ class: "graticule", d: path });
 
-var projection = d3.geo.projection(d3_geo_azimuthalEquidistant)
-    .scale(800)
-    .rotate([71, -42, -70])
-    .translate([width*0.22, height*0.95])
-    .clipAngle(120)
-    .precision(.1);
-
-var path = d3.geo.path()
-    .projection(projection);
-
-var graticule = d3.geo.graticule();
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-svg.append("defs").append("path")
-    .datum({type: "Sphere"})
-    .attr("id", "sphere")
-    .attr("d", path)
-    .attr("fill", "#333");
-
-svg.append("use")
-    .attr("class", "stroke")
-    .attr("xlink:href", "#sphere");
-
-svg.append("use")
-    .attr("class", "fill")
-    .attr("xlink:href", "#sphere");
-
-svg.append("path")
-    .datum(graticule)
-    .attr("class", "graticule")
-    .attr("d", path);
-
-d3.json("geodata/world-50m.json", function(error, world) {
+d3.json("geodata/tm_world_borders_simpl-0.3.json", function(error, world) {
   if (error) throw error;
+  svg.append("path").datum(topojson.feature(world, world.objects['TM_WORLD_BORDERS_SIMPL-0']))
+    .attr("class", "country").attr("d", path);
 
-  //svg.insert("path", ".graticule")
-  svg.append("path")
-      .datum(topojson.feature(world, world.objects.land))
-      .attr("class", "land")
-      .attr("d", path);
+  d3.json("geodata/pois.json", function(error, pois) {
+    svg.selectAll(".stop").data(Object.keys(stops)).enter().append("circle").attr({
+      class: function(stop){ return "stop " + stops[stop].join(" ") },
+      cx: function(stop){ return projection(pois[stop])[0] },
+      cy: function(stop){ return projection(pois[stop])[1] },
+      r: 3
+    });
 
-  //svg.insert("path", ".graticule")
-  svg.append("path")
-      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-      .attr("class", "boundary")
-      .attr("d", path);
-
-  var pt1 = [-71.0588801, 42.3600825];
-  var pt2 = [121.5654177, 25.0329694];
-
-  svg.append("circle").attr({
-    cx: projection(pt1)[0],
-    cy: projection(pt1)[1],
-    r: 6,
-    fill: "#ff0"
-  });
-
-  svg.append("circle").attr({
-    cx: projection(pt2)[0],
-    cy: projection(pt2)[1],
-    r: 6,
-    fill: "#ff0"
-  });
-
-  svg.append("path").attr({
-    //d: "M" + projection(pt1) + "L" + projection(pt2),
-    d: bezier(projection(pt2), projection(pt1)),
-    stroke: "#ff0",
-    fill: "none"
+    svg.selectAll(".segment").data(segments).enter().append("path").attr({
+      class: function(seg){ return "segment " + seg.trip },
+      d: function(seg){ return bezier(projection(pois[seg.from]), projection(pois[seg.to])) }
+    });
   });
 });
 
@@ -164,7 +129,4 @@ function bezier(from, to){
   var mid2 = [0.25*from[0]+0.75*to[0]-0.25*diffY, 0.25*from[1]+0.75*to[1]+0.25*diffX];
   return "M" + from + "C" + mid1 + " " + mid2 + " " + to;
 };
-
-d3.select(self.frameElement).style("height", height + "px");
-
 </script>
