@@ -7,14 +7,26 @@
         background-color: #000;
       }
       #map {
-        margin: auto;
         width: 960px;
+      }
+      #blogpost {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 15px;
+        overflow-y: scroll;
+        color: #fff;
+        font: 14px Arial;
+        width: 480px;
+        height: 600px;
+        background-color: rgba(0,0,0,.75);
       }
     </style>
   	<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
   </head>
   <body>
     <div id="map"></div>
+    <div id="blogpost"></div>
   	<script>
       var trip = {
         stops: {
@@ -135,6 +147,13 @@
         var mid2 = [0.25*from[0]+0.75*to[0]-0.25*diffY, 0.25*from[1]+0.75*to[1]+0.25*diffX];
         return "M" + from + "C" + mid1 + " " + mid2 + " " + to;
       };
+
+      d3.json("https://www.googleapis.com/blogger/v3/blogs/1907077352112258296/posts/5976697897305101837?key=AIzaSyC1a5Qt70mQ9GzIX6uSgvLHHHeo6l4uLoo", function(error, blogPost) {
+        if (!error) {
+          //console.log(blogPost);
+          d3.select("#blogpost").html(blogPost.content);
+        };
+      });
   	</script>
   </body>
 </html>
