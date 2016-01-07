@@ -1,0 +1,55 @@
+<!doctype html>
+<html ng-app="app">
+  <head>
+    <title>Drive to NOLA</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <style>
+.main {
+  margin-top: 5em;
+}
+.post-title {
+}
+.post-date {
+  font-style: italic;
+}
+.post-content img {
+  display: block;
+  margin: 0 auto;
+}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script>
+    <script>
+'use strict';
+var app = angular.module('app', ['ngSanitize']); //ngSanitize is required when using ng-bind-html
+
+app.controller('appCtrl', ['$scope', '$http', function($scope, $http) {
+  $http.get('https://www.googleapis.com/blogger/v3/blogs/1907077352112258296/posts?labels=driveToNOLA&key=AIzaSyC1a5Qt70mQ9GzIX6uSgvLHHHeo6l4uLoo').success(function(data) {
+    $scope.posts = data.items;
+    $scope.tempDate = new Date($scope.posts[0].published).toDateString();
+  });
+}]);
+
+app.directive("scroll", function ($window) {
+  return function(scope, element, attrs) {
+    angular.element($window).bind("scroll", function() {
+    });
+  };
+});
+    </script>
+  </head>
+  <body ng-controller="appCtrl" scroll>
+<nav class="navbar navbar-default navbar-fixed-top">
+</nav>
+<div class="container main">
+  <div class="col-sm-4 map"></div>
+  <div class="col-sm-8">
+    <h1 class="post-title">{{posts[0].title}}</h1>
+    <div class="post-date">{{tempDate}}</div>
+    <div class="post-content" ng-bind-html="posts[0].content"></div>
+  </div>
+</div>
+  </body>
+</html>
