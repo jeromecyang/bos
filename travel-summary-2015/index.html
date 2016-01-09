@@ -102,12 +102,12 @@ var svg = d3.select("body").append("svg").attr({ width: width, height: height })
 svg.append("path").datum({type: "Sphere"}).attr({ class: "sphere", d: path })
 svg.append("path").datum(d3.geo.graticule()).attr({ class: "graticule", d: path });
 
-d3.json("geodata/tm_world_borders_simpl-0.3.json", function(error, world) {
+d3.json("../common/geodata/tm_world_borders_simpl-0.3.json", function(error, world) {
   if (error) throw error;
   svg.append("path").datum(topojson.feature(world, world.objects['TM_WORLD_BORDERS_SIMPL-0']))
     .attr("class", "country").attr("d", path);
 
-  d3.json("geodata/pois.json", function(error, pois) {
+  d3.json("../common/geodata/pois.json", function(error, pois) {
     svg.selectAll(".stop").data(Object.keys(stops)).enter().append("circle").attr({
       class: function(stop){ return "stop " + stops[stop].join(" ") },
       cx: function(stop){ return projection(pois[stop])[0] },

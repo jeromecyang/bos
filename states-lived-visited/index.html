@@ -56,7 +56,7 @@
       var visited = ["ME", "NH", "VT", "MA", "RI", "CT", "NY", "NJ", "PA", "DE", "MD", "VA", "NC", "SC", "GA", "FL", "OH", "MI", "IN", "IL", "WI", "MO", "KS", "CO", "NM", "AZ", "UT", "TX", "NV", "CA", "OR", "WA", "DC", "WY", "ID", "MT", "WV", "TN", "KY", "MS", "AL", "LA"];
       var lived = ["MA", "CA", "ME"];
 
-  	  d3.json("../../geodata/us_states.json", function(error, geojson) {
+  	  d3.json("../common/geodata/us_states.json", function(error, geojson) {
         if (!error) {
           map(geojson);
         };

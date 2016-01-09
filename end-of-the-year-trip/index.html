@@ -59,7 +59,7 @@
         ]
       };
 
-  	  d3.json("geodata/us_states.json", function(error, geojson) {
+  	  d3.json("../common/geodata/us_states.json", function(error, geojson) {
         if (!error) {
           map(geojson);
         };
