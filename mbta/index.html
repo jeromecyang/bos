@@ -29,7 +29,7 @@
         map.mapTypes.set("custom", new google.maps.StyledMapType([
           {
             stylers: [
-              { hue: '#000000' }, { visibility: 'simplified' }, { gamma: 0.05 }, { lightness: -30 }
+              { hue: '#000000' }, { visibility: 'simplified' }, { gamma: 0.08 }, { lightness: -30 }
             ]
           },
           {
@@ -97,11 +97,12 @@
                     map: map,
                     title: v.trip_headsign,
                     icon: {
-                      path: 'M-1,0a1,1 0 1,0 2,0a1,1 0 1,0 -2,0',
-                      fillColor: i ? "#ffff00" : "#ff00ff",
-                      fillOpacity: 0.75,
+                      path: 'M0,-2L-1.5,2L0,1L1.5,2z',
+                      fillColor: i ? "#bcbd22" : "#17becf",
+                      fillOpacity: 1,
                       strokeWeight: 0,
-                      scale: 6
+                      scale: 6,
+                      rotation: Number(v.vehicle.vehicle_bearing) || 0
                     }
                   });
                   google.maps.event.addListener(marker, 'click', function() {
